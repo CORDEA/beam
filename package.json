@@ -10,6 +10,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "nightmare": "^2.10.0",
-    "nodemailer": "^4.0.1"
+    "nodemailer": "^4.0.1",
+    "xvfb": "^0.2.3"
   }
 }

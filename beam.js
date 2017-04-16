@@ -19,6 +19,7 @@
 
 let Nightmare = require('nightmare');
 let nodemailer = require('nodemailer');
+let Xvfb = require('xvfb');
 
 let nightmare = Nightmare();
 
@@ -39,6 +40,11 @@ let transporter = nodemailer.createTransport({
   }
 });
 
+let xvfb = new Xvfb({
+  silent: true
+});
+xvfb.startSync();
+
 nightmare
   .goto(process.env.BEAM_BASE_URL)
   .on('console', function(type, arg) {
@@ -48,13 +54,13 @@ nightmare
   .evaluate(function () {
     var elems = document
       .querySelectorAll('#store_product_variant .store_select_variant option');
-      return Array.prototype
-        .map.call(Array.prototype
-          .filter.call(elems, function(x) {
-            return x.innerText !== '選択';
-          }), function(x) {
-            return x.innerText;
-          });
+    return Array.prototype
+      .map.call(Array.prototype
+        .filter.call(elems, function(x) {
+          return x.innerText !== '選択';
+        }), function(x) {
+          return x.innerText;
+        });
   })
   .end()
   .then(function (result) {
@@ -74,7 +80,9 @@ nightmare
         return console.log(error);
       }
     });
+    xvfb.stopSync();
   })
   .catch(function (error) {
     console.error('failed: ', error);
+    xvfb.stopSync();
   });
